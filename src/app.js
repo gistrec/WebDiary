@@ -19,6 +19,9 @@ app.use(bodyParser.urlencoded({   // To support URL-encoded bodies
     extended: true
 }));
 
+var moment = require('moment');
+require('moment/locale/ru');
+
 /**
  * Middleware, проверяем авторзиацию
  * Добавляем переменные req.auth
@@ -35,18 +38,6 @@ app.use((req, res, next) => {
 		}catch(error) {
 			req.auth = false;
 		}
-	}
-	next();
-})
-
-
-/**
- * Middleware, получаем данные пользователя
- * Добавляем переменную req.data
- */
-app.use((req, res, next) => {
-	if (req.auth) {
-		req.data = db.getData('/data/' + req.cookies.login);
 	}
 	next();
 })
@@ -110,10 +101,21 @@ app.post('/register', (req, res) => {
 	}
 })
 
+/**
+ * Middleware, получаем данные пользователя
+ * Добавляем переменную req.data
+ */
+app.use((req, res, next) => {
+	if (req.auth) {
+		req.data = db.getData('/data/' + req.cookies.login);
+	}
+	next();
+})
+
 app.get('/index', (req, res) => {
 	if (!req.auth) return res.redirect('/login');
 
-	res.render('index');
+	res.render('index', {data: req.data, moment});
 })
 
 //app.use((req, res) => {
