@@ -13,13 +13,14 @@ $('.summernote').summernote({height: 100});
  * Функция сортирует задачи по времени в выбранную дату 
  */
 function sortByTime(date) {
+	date = date.replace(/\./g, '');
 	$('#tasks_' + date + ' li').sort(function(a, b) {
 		var aValue = $(a).find('#time').html();
 		var bValue = $(b).find('#time').html();
 		if (aValue > bValue) return 1;
 		if (aValue < bValue) return -1;
 		return 0;
-	}).appendTo('#tasks_' + date + ' li');
+	}).appendTo('#tasks_' + date);
 }
 
 /**
@@ -41,7 +42,7 @@ function insertTask() {
             </div>\
         </li>');
 	// Сортируем день, в который добавили задачу по времени
-	// sortByTime($('#modal').find('#date').html());
+	sortByTime($('#modal').find('#date').html());
 }
 
 /**
