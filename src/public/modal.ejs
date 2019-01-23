@@ -1,0 +1,39 @@
+<div class="m-t-md">
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 id="name" class="modal-title">Добавить задачу</h4>
+                    <small>На <span id="date"></span></small>
+                </div>
+                <div class="modal-body">
+                    <!-- Старое время, чтобы знать какую задачу -->
+                    <div id="old_time" hidden="true"></div>
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="time" class="col-sm-2 control-label">Время</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="time" placeholder="00:00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">Название</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="title" placeholder="Новая задача">
+                            </div>
+                        </div>
+                    </form>
+                    <br>
+                    <div class="summernote">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="delete" class="btn btn-danger pull-left"   onclick="deleteTask()">Удалить</button>
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-accent"  id="action">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

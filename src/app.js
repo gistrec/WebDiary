@@ -9,6 +9,8 @@ const bodyParser   = require('body-parser')
 const JsonDB = require('node-json-db');
 const db = new JsonDB("database", true, true);
 
+const utils = require('./utils.js');
+
 app.set('view engine', 'ejs'); // set the view engine to ejs
 app.set('views', require("path").join(__dirname, '/public'));
 
@@ -45,16 +47,40 @@ app.use((req, res, next) => {
 /**
  * Отдаем страницу login.ejs
  */
-app.get('/login(\.html)?', (req, res) => {
+app.get('/login', (req, res) => {
 	if (req.auth) return res.redirect('/index');
 	res.render('login');
+})
+
+/**
+ * Отдаем страницу register.ejs
+ */
+app.get('/register', (req, res) => {
+	if (req.auth) return res.redirect('/index');
+	res.render('register');
+})
+
+/**
+ * Middleware, получаем данные пользователя
+ * Добавляем переменную req.data
+ */
+app.use((req, res, next) => {
+	if (req.auth) {
+		req.data = db.getData('/data/' + req.cookies.login);
+	}
+	next();
+})
+
+app.get('/index', (req, res) => {
+	if (!req.auth) return res.redirect('/login');
+    
+	res.render('index', {data: req.data, moment, compareDate: utils.compareDate});
 })
 
 /**
  * Post запрос на вход
  * @param login  - логин
  * @param passwd - пароль
- * $return Error || Ok
  */
 app.post('/login', (req, res) => {
 	try {
@@ -72,19 +98,10 @@ app.post('/login', (req, res) => {
 })
 
 /**
- * Отдаем страницу register.ejs
- */
-app.get('/register(\.html)?', (req, res) => {
-	if (req.auth) return res.redirect('/index');
-	res.render('register');
-})
-
-/**
  * Post запрос на регистрацию
  * @param login  - логин
  * @param passwd - пароль
  * @param mail   - почта
- * $return Error || Ok
  */
 app.post('/register', (req, res) => {
 	try {
@@ -102,25 +119,52 @@ app.post('/register', (req, res) => {
 })
 
 /**
- * Middleware, получаем данные пользователя
- * Добавляем переменную req.data
+ * Удаляем задачу
+ * @param date - дата, к которой принадлежит задача
+ * @param time - время, на которое создана задача
  */
-app.use((req, res, next) => {
-	if (req.auth) {
-		req.data = db.getData('/data/' + req.cookies.login);
-	}
-	next();
-})
-
-app.get('/index', (req, res) => {
+app.post('/delete', (req, res) => {
 	if (!req.auth) return res.redirect('/login');
 
-	res.render('index', {data: req.data, moment});
+	db.delete('/data/' + req.cookies.login + '/' + req.body.date + '/' + req.body.time);
+	res.send('Ok');
 })
 
-//app.use((req, res) => {
-//	res.redirect('/index');
-//})
+/**
+ * Создаем задачу
+ * @param date - дата
+ * @param time - время
+ * @param title - название
+ * @param description - описание
+ */
+app.post('/add', (req, res) => {
+	if (!req.auth) return res.redirect('/login');
+
+	db.push('/data/' + req.cookies.login + '/' + req.body.date + '/' + req.body.time, 
+		{title: req.body.title, description: req.body.description});
+
+	res.send('Ok');
+})
+
+/**
+ * Изменяем задачу
+ * @param date - дата
+ * @param old_time - старое время
+ * @param time  - время
+ * @param title - название
+ * @param description - описание
+ */
+app.post('/edit', (req, res) => {
+	if (!req.auth) return res.redirect('/login');
+
+	// Удаляем старую 
+	db.delete('/data/' + req.cookies.login + '/' + req.body.date + '/' + req.body.old_time);
+	// Добавляем новую
+	db.push('/data/' + req.cookies.login + '/' + req.body.date + '/' + req.body.time, 
+		{title: req.body.title, description: req.body.description});
+
+	res.send('Ok');
+})
 
 app.listen(8080);
 console.log('WebDiary start on 8080 port');

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="vendor\animate.css\animate.css">
     <link rel="stylesheet" href="vendor\bootstrap\css\bootstrap.css">
     <link rel="stylesheet" href="vendor\toastr\toastr.min.css">
+    <link rel="stylesheet" href="vendor\summernote\dist\summernote.css">
 
     <!-- App styles -->
     <link rel="stylesheet" href="styles\pe-icons\pe-icon-7-stroke.css">
@@ -46,7 +47,7 @@
                     <div class="header-title">
                         <h3>Список дел</h3>
                         <small>
-                            Поддержка Drag & Drop для каждого пункта
+                            Запиши свои планы чтобы ничего не забыть
                         </small>
                     </div>
                 </div>
@@ -56,18 +57,13 @@
 
             <div class="col-lg-8 col-lg-offset-2">
                 <div class="panel">
-                    <div class="panel-heading">
-                        <div class="panel-tools">
-                            <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
-                            <!-- <a class="panel-close"><i class="fa fa-times"></i></a> -->
-                        </div>
-                        Ежедневник
-                    </div>
+
+                    <%- include('modal'); %>
+
                     <div class="panel-body">
-                        <p class="m-b-lg">
-                            Задачи, которые привязаны ко времени или дню
-                        </p>
-                        <%- include('tasklist', {data, moment}); %>
+
+                        <%- include('tasklist', {data, moment, compareDate}); %>
+                        
                     </div>
                 </div>
             </div>
@@ -87,37 +83,13 @@
 <script src="vendor\bootstrap\js\bootstrap.min.js"></script>
 <script src="vendor\nestable\jquery.nestable.js"></script>
 <script src="vendor\toastr\toastr.min.js"></script>
+<script src="vendor\summernote\dist\summernote.min.js"></script>
 
 
 <!-- App scripts -->
 <script src="scripts\luna.js"></script>
 <script src="scripts\index.js"></script>
 
-<script>
-    $(document).ready(function () {
-
-        // Log for nestable list
-        var updateOutput = function (e) {
-            var list = e.length ? e : $(e.target),
-                    output = list.data('output');
-            if (window.JSON) {
-                output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
-            } else {
-                output.val('JSON browser support required for this demo.');
-            }
-        };
-
-        // Activate Nestable for list 1
-        $('#nestable').nestable({
-            group: 1
-        }).on('change', updateOutput);
-
-
-        // Output initial serialised data
-        updateOutput($('#nestable').data('output', $('#nestable-output')));
-
-    });
-</script>
 
 </body>
 

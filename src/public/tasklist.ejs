@@ -1,35 +1,40 @@
 <div class="dd" id="nestable">
     <ol class="dd-list">
-        <% 
+        <%
         /**
          * Вывод дней с задачами
          * @param data [object] - список дней
          */
-        Object.keys(data).map(function(day, index) {
-            var tasks = data[day];                %>
+        Object.keys(data).sort(compareDate).map(function(date) {
+            var tasks = data[date];                %>
             <li class="dd-item">
                 <div class="dd-handle">
                     <span><i class="fa fa-bolt m-r-xs"></i></span>
                     <% // Делаем первую букву заглавной
-                    var name = moment(day, "DD.MM.YYYY").format("dddd")
+                    var name = moment(date, "DD.MM.YYYY").format("dddd")
                     name = name[0].toUpperCase() + name.slice(1);    %>
-                    <%= name %> &ensp; <%= day %>
+                    <%= name %> &ensp; <%= date %>
                     <div class="panel-tools">
-                        <a class="panel-close"><i class="fa fa-calendar-plus-o"></i></a>
+                        <a class="task-add" onClick="createTask('<%= date %>');">
+                            <i class="fa fa-calendar-plus-o"></i>
+                        </a>
                     </div>
                 </div>
-                <ol class="dd-list">
+                <ol class="dd-list" id="tasks_<%= date.replace(/\./g, '') %>">
                     <%
                     /**
                      * Вывод задач у текущего дня
                      * @param tasks [object] - список задач
                      */
-                    Object.keys(tasks).map(function(number, index) { 
-                        var task = tasks[number]                  %>            
-                        <li class="dd-item">
+                    Object.keys(tasks).sort().map(function(time) { 
+                        var task = tasks[time]                  %>            
+                        <li id="task_<%= date.replace(/\./g, '') + '_' + time.replace(/\:/g, '') %>" class="dd-item" onclick="showTask(this);">
                             <div class="dd-handle">
-                                <span class="pull-left"> <%= task.time %> </span>&ensp;
-                                <%= task.title %>
+                                <!-- Даные о задаче -->
+                                <span id="time" class="pull-left"><%= time %></span>&ensp;
+                                <span id="title"><%= task.title %></span>
+                                <span id="description" hidden="true"><%= task.description %></span>
+                                <span id="date" hidden="true"><%= date %></span>
                             </div>
                         </li>
                     <% }) %>
