@@ -166,5 +166,35 @@ app.post('/edit', (req, res) => {
 	res.send('Ok');
 })
 
+/**
+ * Добавляем новый день
+ * @param date - дата
+ * @res Error || Ok
+ */
+app.post('/add_day', (req, res) => {
+	if (!req.auth) return res.redirect('/login');
+
+	try {
+		// Если день уже есть, то исключения не будет
+		db.getData('/data/' + req.cookies.login + '/' + req.body.date);
+		res.send('Error');
+	}catch (error) {
+		db.push('/data/' + req.cookies.login + '/' + req.body.date, {});
+		res.send('Ok');
+	}
+})
+
+/**
+ * Удаляем день
+ * @param date - дата
+ * @res Ok
+ */
+app.post('/delete_day', (req, res) => {
+	if (!req.auth) return res.redirect('/login');
+
+	db.delete('/data/' + req.cookies.login + '/' + req.body.date);
+	res.send('Ok');
+})
+
 app.listen(8080);
 console.log('WebDiary start on 8080 port');

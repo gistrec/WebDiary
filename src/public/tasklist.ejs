@@ -1,5 +1,5 @@
 <div class="dd" id="nestable">
-    <ol class="dd-list">
+    <ol class="dd-list" id="days">
         <%
         /**
          * Вывод дней с задачами
@@ -8,6 +8,8 @@
         Object.keys(data).sort(compareDate).map(function(date) {
             var tasks = data[date];                %>
             <li class="dd-item">
+                <!-- Скрытое поле day -->
+                <div id="day" hidden="true"><%= date %></div>
                 <div class="dd-handle">
                     <span><i class="fa fa-bolt m-r-xs"></i></span>
                     <% // Делаем первую букву заглавной
@@ -15,8 +17,12 @@
                     name = name[0].toUpperCase() + name.slice(1);    %>
                     <%= name %> &ensp; <%= date %>
                     <div class="panel-tools">
-                        <a class="task-add" onClick="createTask('<%= date %>');">
+                        <a onClick="createTask('<%= date %>');">
                             <i class="fa fa-calendar-plus-o"></i>
+                        </a>
+                        &ensp;
+                        <a onClick="deleteDay('<%= date %>');">
+                            <i class="fa fa-times"></i>
                         </a>
                     </div>
                 </div>

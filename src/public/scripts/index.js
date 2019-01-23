@@ -181,3 +181,57 @@ $('#action').on('click', function () {
 	if (action == 'Добавить') addTask();
 	if (action == 'Изменить') editTask();
 })
+
+/**
+ * Вызывается при нажатии 'Добавить' новый день
+ * Отправляем POST запрос на /add_day
+ * Если ответ 'Ok' то день добавлен - перезагружаем страницу
+ *      ибо писать сортировку - это еще лишние 30 строк кода
+ * Если ответ 'Error' то день уже существует
+ */
+function addDay() {
+	const date = $('#modal2').find('#date').val();
+	$.ajax({
+	    type: "POST",
+	    url: "/add_day",
+	    data: {	date },
+	    success: function(res) {
+	        if (res == 'Ok') {
+		        toastr.success("День успешно добавлен");
+		        $('#modal2').modal('hide');
+
+		        // Перезагружаем страницу
+		       	setTimeout(function() {
+		            window.location.href = "/index";
+		        }, 1000);
+		    }else {
+	        	toastr.error('День уже существует');
+		    }
+	    }
+	});	
+}
+
+
+
+/**
+ * Функция вызывается при нажатии на 'крестик' у дня
+ * Отправляем POST запрос на /delete_day
+ * Если ответ 'Ок' то день удален - перезагружаем страницу
+ */
+function deleteDay(date) {
+	$.ajax({
+	    type: "POST",
+	    url: "/delete_day",
+	    data: {	date },
+	    success: function(res) {
+	        if (res == 'Ok') {
+		        toastr.success("День успешно удален");
+
+		        // Перезагружаем страницу
+		       	setTimeout(function() {
+		            window.location.href = "/index";
+		        }, 1000);
+		    }
+	    }
+	});	
+}
